@@ -71,6 +71,22 @@
         </select>
     </div>
 
+    <!-- Sync controls -->
+    <div id="syncControls" style="margin-top:16px;">
+        <button id="manualSyncBtn">Sync Now</button>
+        <span id="syncStatus">Not synced yet</span>
+    </div>
+
+    <!-- Conflict notification area (hidden until conflicts exist) -->
+    <div id="conflictArea"
+        style="display:none; margin-top:12px; border:1px solid #f0ad4e; padding:10px; background:#fffbea;">
+        <strong>Sync conflicts detected</strong>
+        <div id="conflictList" style="margin-top:8px;"></div>
+        <button id="acceptServerBtn">Accept Server Versions</button>
+        <button id="keepLocalBtn">Keep Local Versions</button>
+    </div>
+
+
     <div id="quoteDisplay">Click "Show New Quote" to start!</div>
 
     <button id="newQuote">Show New Quote</button>
