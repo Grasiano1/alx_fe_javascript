@@ -31,12 +31,8 @@
             min-height: 80px;
         }
 
-        #controls {
-            margin-top: 20px;
-        }
-
-        input,
         select,
+        input,
         button {
             padding: 8px 12px;
             margin: 6px;
@@ -67,30 +63,33 @@
 <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <!-- Category filter container (created dynamically by JS) -->
-    <div id="categoryFilterContainer"></div>
+    <!-- Step 1: Category Filter -->
+    <div>
+        <label for="categoryFilter">Filter by Category:</label>
+        <select id="categoryFilter" onchange="filterQuotes()">
+            <option value="all">All Categories</option>
+        </select>
+    </div>
 
-    <!-- Display area for quotes -->
     <div id="quoteDisplay">Click "Show New Quote" to start!</div>
 
-    <!-- Button to show a new random quote -->
-    <div id="controls">
-        <button id="newQuote">Show New Quote</button>
-    </div>
+    <button id="newQuote">Show New Quote</button>
 
     <hr />
 
-    <!-- Section to add new quotes dynamically (JS will also generate this) -->
-    <div id="addQuoteContainer"></div>
+    <h2>Add a New Quote</h2>
+    <div>
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+        <button id="addQuoteBtn">Add Quote</button>
+    </div>
 
-    <!-- === Import/Export Section (required for file functions) === -->
     <div id="fileControls">
         <h2>Import/Export Quotes</h2>
         <button id="exportQuotes">Export Quotes (JSON)</button>
         <input type="file" id="importFile" accept=".json" />
     </div>
 
-    <!-- JS file -->
     <script src="script.js"></script>
 </body>
 
