@@ -2,25 +2,95 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dynamic Quote Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f9f9f9;
+            color: #333;
+            padding: 30px;
+        }
+
+        h1,
+        h2 {
+            color: #4a4a4a;
+        }
+
+        #quoteDisplay {
+            margin: 20px auto;
+            font-size: 1.3rem;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            min-height: 80px;
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        input,
+        select,
+        button {
+            padding: 8px 12px;
+            margin: 6px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        #fileControls {
+            margin-top: 25px;
+            padding: 15px;
+            border-top: 1px solid #ccc;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Dynamic Quote Generator</h1>
-    <div id="quoteDisplay"></div>
-    <button id="newQuote">Show New Quote</button>
-    <script src="script.js"></script>
 
-    <div>
-        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-        <button onclick="addQuote()">Add Quote</button>
+    <!-- Category filter container (created dynamically by JS) -->
+    <div id="categoryFilterContainer"></div>
+
+    <!-- Display area for quotes -->
+    <div id="quoteDisplay">Click "Show New Quote" to start!</div>
+
+    <!-- Button to show a new random quote -->
+    <div id="controls">
+        <button id="newQuote">Show New Quote</button>
     </div>
 
-    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    <hr />
 
+    <!-- Section to add new quotes dynamically (JS will also generate this) -->
+    <div id="addQuoteContainer"></div>
+
+    <!-- === Import/Export Section (required for file functions) === -->
+    <div id="fileControls">
+        <h2>Import/Export Quotes</h2>
+        <button id="exportQuotes">Export Quotes (JSON)</button>
+        <input type="file" id="importFile" accept=".json" />
+    </div>
+
+    <!-- JS file -->
     <script src="script.js"></script>
 </body>
 
