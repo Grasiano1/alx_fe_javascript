@@ -91,7 +91,7 @@ function showNotification(message, type = 'success') {
 /**
  * Displays a random quote based on the current filter, or a message if no quotes match.
  */
-function showRandomQuote() {
+function displayRandomQuote() {
     const selectedCategory = categoryFilter.value;
     let filteredQuotes;
 
@@ -158,7 +158,7 @@ function addQuote() {
     // If the new category is selected, refresh the list
     if (categoryFilter.value === category || categoryFilter.value === 'all') {
         // After adding, show the quote itself if the filter allows
-        showRandomQuote();
+        displayRandomQuote();
         renderQuotes(); // Also update list view
     }
 }
@@ -240,7 +240,7 @@ function renderQuotes(selectedCategory = categoryFilter.value) {
         newQuoteButton.textContent = "Show New Quote";
         filteredListContainer.classList.add('hidden');
         quoteDisplay.classList.remove('hidden'); // Show single display
-        showRandomQuote();
+        displayRandomQuote();
     }
 }
 
@@ -408,10 +408,10 @@ window.onload = function () {
             currentQuoteText.textContent = quoteObj.text;
             currentQuoteCategory.textContent = `- Category: ${quoteObj.category}`;
         } catch (e) {
-            showRandomQuote(); // Show random if session data is corrupted
+            displayRandomQuote(); // Show random if session data is corrupted
         }
     } else {
-        renderQuotes(); // Initial rendering based on filter (will call showRandomQuote if 'all')
+        renderQuotes(); // Initial rendering based on filter (will call displayRandomQuote if 'all')
     }
 
     // Task 3: Start periodic server sync simulation
