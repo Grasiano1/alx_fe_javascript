@@ -30,6 +30,7 @@ const quoteList = document.getElementById('quoteList');
 const notificationArea = document.getElementById('notificationArea');
 const notificationMessage = document.getElementById('notificationMessage');
 const newQuoteButton = document.getElementById('newQuote');
+const confirmationModal = document.getElementById('confirmationModal'); // NEW MODAL ELEMENT
 
 // --- WEB STORAGE (TASK 2) & UTILITIES ---
 
@@ -308,6 +309,45 @@ function importFromJsonFile(event) {
         }
     };
     fileReader.readAsText(file);
+}
+
+// --- NEW MODAL FUNCTIONS FOR DELETION ---
+
+/**
+ * Shows the custom confirmation modal.
+ */
+function confirmDeleteAllQuotes() {
+    confirmationModal.classList.remove('hidden');
+}
+
+/**
+ * Hides the custom confirmation modal.
+ */
+function hideModal() {
+    confirmationModal.classList.add('hidden');
+}
+
+/**
+ * Clears all quotes from the array and localStorage.
+ */
+function deleteAllQuotes() {
+    // Clear the local state array
+    quotes = [];
+
+    // Clear the storage
+    localStorage.removeItem('quotes');
+
+    // Reset dynamic elements
+    populateCategories();
+    renderQuotes();
+
+    // Reset nextId to ensure new quotes start from a low number if all data is cleared
+    nextId = 1;
+
+    // Update UI
+    currentQuoteText.textContent = "All quotes have been deleted.";
+    currentQuoteCategory.textContent = "";
+    showNotification('All local quotes have been successfully deleted.', 'error');
 }
 
 // --- SERVER SYNC & CONFLICT RESOLUTION (TASK 3) ---
