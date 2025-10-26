@@ -1,153 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Quote Generator</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        /* Custom scrollbar for aesthetic */
-        .quote-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .quote-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        .quote-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Quote Generator</title>
 </head>
+<body>
+  <h1>Dynamic Quote Generator</h1>
 
-<body class="bg-gray-50 min-h-screen p-4 sm:p-8">
+  <!-- Display area for the quote -->
+  <div id="quoteDisplay"></div>
 
-    <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-xl p-6 sm:p-10">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-700 mb-6 text-center">
-            Dynamic Quote Generator
-        </h1>
+  <!-- Button to show a new random quote -->
+  <button id="newQuote">Show New Quote</button>
 
-        <!-- Notification Area -->
-        <div id="notificationArea" class="mb-6 hidden">
-            <div id="notificationMessage"
-                class="p-3 rounded-lg shadow-md text-sm font-medium bg-green-100 text-green-800 border border-green-300">
-                Data synced successfully!
-            </div>
-        </div>
+  <!-- Section to add new quotes -->
+  <div>
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button id="addQuoteBtn">Add Quote</button>
+  </div>
 
-        <!-- Quote Display Area -->
-        <div id="quoteDisplay"
-            class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-lg shadow-inner mb-8 transition duration-300 min-h-[150px] flex flex-col justify-center">
-            <p id="currentQuoteText" class="text-xl italic text-gray-800 mb-3 text-center">
-                Loading quotes...
-            </p>
-            <p id="currentQuoteCategory" class="text-sm font-semibold text-indigo-600 text-right">
-                - Category: Loading
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <!-- New Quote Button -->
-            <button id="newQuote" onclick="displayRandomQuote()"
-                class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition duration-150">
-                Show New Quote
-            </button>
-
-            <!-- Category Filter Dropdown -->
-            <div>
-                <label for="categoryFilter" class="block text-sm font-medium text-gray-700 mb-1">Filter by
-                    Category:</label>
-                <select id="categoryFilter" onchange="filterQuotes(this.value)"
-                    class="w-full border border-gray-300 rounded-lg p-3 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150">
-                    <option value="all">All Categories</option>
-                    <!-- Categories populated by JS -->
-                </select>
-            </div>
-
-            <!-- Export Button -->
-            <button id="exportQuotesBtn" onclick="exportQuotes()"
-                class="w-full bg-yellow-500 text-gray-900 font-bold py-3 px-4 rounded-lg shadow-md hover:bg-yellow-600 transition duration-150">
-                Export Quotes (JSON)
-            </button>
-        </div>
-
-
-        <!-- Quote List (Visible only when filtering) -->
-        <div id="filteredListContainer" class="hidden mt-6">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Filtered Quotes</h2>
-            <div id="quoteList"
-                class="quote-container max-h-96 overflow-y-auto space-y-3 p-2 bg-gray-50 rounded-lg border">
-                <!-- Filtered quotes dynamically generated here -->
-            </div>
-        </div>
-
-        <!-- Add Quote & Import Form -->
-        <div class="mt-10 pt-8 border-t border-gray-200">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Manage Quotes</h2>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Add New Quote Form -->
-                <div class="p-4 border border-indigo-200 bg-indigo-50 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-medium text-indigo-800 mb-3">Add New Quote</h3>
-                    <input id="newQuoteText" type="text" placeholder="Enter a new quote"
-                        class="w-full p-2 mb-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-                    <input id="newQuoteCategory" type="text" placeholder="Enter quote category"
-                        class="w-full p-2 mb-4 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" />
-                    <button onclick="addQuote()"
-                        class="w-full bg-green-600 text-white font-bold py-2 rounded-lg hover:bg-green-700 transition duration-150">
-                        Add Quote to Collection
-                    </button>
-                </div>
-
-                <!-- Import JSON Form and Delete Button -->
-                <div class="p-4 border border-gray-300 bg-white rounded-lg shadow-sm">
-                    <h3 class="text-lg font-medium text-gray-800 mb-3">Data Management</h3>
-
-                    <h4 class="font-semibold text-sm mb-2 text-gray-600">Import Quotes (JSON)</h4>
-                    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)"
-                        class="w-full p-2 mb-4 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                    <p class="text-sm text-gray-500 mb-6">Upload a JSON file containing an array of `{text, category}`
-                        objects.</p>
-
-                    <h4 class="font-semibold text-sm mb-2 text-red-600 border-t pt-4 mt-4">Danger Zone</h4>
-                    <!-- New Delete Button triggers the confirmation modal -->
-                    <button onclick="confirmDeleteAllQuotes()"
-                        class="w-full bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition duration-150">
-                        Delete ALL Local Quotes
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Confirmation Modal (Hidden by Default) -->
-    <div id="confirmationModal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm w-full">
-            <h3 class="text-xl font-bold text-red-700 mb-4">Confirm Deletion</h3>
-            <p class="text-gray-700 mb-6" id="modalMessage">Are you sure you want to delete ALL quotes? This action
-                cannot be undone.</p>
-            <div class="flex justify-end space-x-3">
-                <button onclick="hideModal()"
-                    class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">Cancel</button>
-                <button onclick="deleteAllQuotes(); hideModal();"
-                    class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">Confirm
-                    Delete</button>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
-
 </html>
