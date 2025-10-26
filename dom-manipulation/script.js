@@ -8,7 +8,7 @@ let quotes = [
 
 const QUOTES_STORAGE_KEY = 'quotes';
 const LAST_FILTER_KEY = 'lastSelectedCategory';
-const MOCK_API_URL = 'https://jsonplaceholder.typicode.com/posts'; // Mock API for Task 3
+const MOCK_API_URL = 'https://jsonplaceholder.typicode.com/posts';
 
 // ======================================================================
 // Helper Functions for Web Storage (Task 1)
@@ -27,7 +27,6 @@ function saveQuotes() {
 function loadQuotes() {
     const storedQuotes = localStorage.getItem(QUOTES_STORAGE_KEY);
     if (storedQuotes) {
-        // Replace the initial array with stored quotes
         quotes = JSON.parse(storedQuotes);
     }
 }
@@ -49,6 +48,7 @@ function showRandomQuote() {
 
     if (filteredQuotes.length === 0) {
         quoteDisplay.innerHTML = '<p>No quotes found for this category.</p>';
+        // Clear old content, then add the message
         return;
     }
 
@@ -70,11 +70,10 @@ function showRandomQuote() {
     quoteDiv.appendChild(quoteText);
     quoteDiv.appendChild(quoteCategory);
 
-    // Clear previous content and append the new quote
     quoteDisplay.innerHTML = '<h2>Random Quote:</h2>';
     quoteDisplay.appendChild(quoteDiv);
 
-    // Optional Session Storage (Task 1 - Storing last viewed quote)
+    // Optional Session Storage (Task 1)
     sessionStorage.setItem('lastViewedQuote', JSON.stringify(randomQuote));
 }
 
@@ -106,7 +105,7 @@ function addQuote() {
     }
 }
 
-// Event listener for the "Show New Quote" button (Task 0)
+// Event listener for the "Show Random Quote" button (Task 0)
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 
@@ -122,13 +121,11 @@ function populateCategories() {
     // Get unique categories, converting to lowercase for case-insensitive comparison
     const uniqueCategories = [...new Set(quotes.map(quote => quote.category.trim()))].sort();
 
-    // Store the currently selected value before clearing
     const currentValue = categoryFilter.value;
 
     // Clear existing options, but keep the "All Categories" option
     categoryFilter.innerHTML = '<option value="all">All Categories</option>';
 
-    // Dynamically create and append new options
     uniqueCategories.forEach(category => {
         const option = document.createElement('option');
         option.value = category;
@@ -136,11 +133,10 @@ function populateCategories() {
         categoryFilter.appendChild(option);
     });
 
-    // Restore the selected value if it still exists
+    // Restore the selected value
     if (Array.from(categoryFilter.options).some(option => option.value === currentValue)) {
         categoryFilter.value = currentValue;
     } else {
-        // If the old value is gone (e.g., category deleted), default to 'all'
         categoryFilter.value = 'all';
     }
 }
@@ -187,7 +183,7 @@ function restoreLastFilter() {
     const categoryFilter = document.getElementById('categoryFilter');
 
     if (lastFilter) {
-        // Check if the restored filter is a valid category (i.e., exists in the dropdown options)
+        // Check if the filter is a valid option before setting
         if (Array.from(categoryFilter.options).some(option => option.value === lastFilter)) {
             categoryFilter.value = lastFilter;
         }
@@ -203,23 +199,21 @@ function restoreLastFilter() {
  * Exports the current quotes array to a downloadable JSON file.
  */
 function exportToJsonFile() {
-    const dataStr = JSON.stringify(quotes, null, 2); // null, 2 for pretty-printing
+    const dataStr = JSON.stringify(quotes, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
 
-    // Create a temporary link element for download
     const a = document.createElement('a');
     a.href = url;
     a.download = 'quotes_export.json';
-    document.body.appendChild(a); // Append to DOM to make it clickable
-    a.click(); // Programmatically click the link to trigger download
-    document.body.removeChild(a); // Clean up the DOM
-    URL.revokeObjectURL(url); // Release the object URL
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 /**
- * Handles the file selection event to import quotes from a JSON file.
- * @param {Event} event - The change event from the file input.
+ * Imports quotes from a JSON file selected by the user.
  */
 function importFromJsonFile(event) {
     const fileReader = new FileReader();
@@ -227,17 +221,15 @@ function importFromJsonFile(event) {
         try {
             const importedQuotes = JSON.parse(event.target.result);
 
-            // Basic validation: ensure it's an array and contains objects
             if (!Array.isArray(importedQuotes) || importedQuotes.some(q => !q.text || !q.category)) {
                 alert('Invalid JSON format. Quotes should be an array of objects with "text" and "category" properties.');
                 return;
             }
 
-            // Add new quotes to the existing array
             quotes.push(...importedQuotes);
             saveQuotes();
             populateCategories();
-            filterQuotes(); // Refresh display
+            filterQuotes();
             alert('Quotes imported successfully!');
         } catch (e) {
             alert('Error parsing JSON file: ' + e.message);
@@ -255,18 +247,26 @@ function importFromJsonFile(event) {
 // ======================================================================
 
 /**
- * Displays a synchronization status message.
- * @param {string} message - The message to display.
- * @param {string} type - 'success', 'error', or 'info'.
+ * Displays a synchronization status message. This serves as the UI notification.
  */
 function setSyncStatus(message, type) {
     const statusDiv = document.getElementById('syncStatus');
     statusDiv.textContent = message;
     statusDiv.style.display = 'block';
-    statusDiv.style.backgroundColor = type === 'error' ? '#f8d7da' : type === 'success' ? '#d4edda' : '#fff3cd';
-    statusDiv.style.color = type === 'error' ? '#721c24' : type === 'success' ? '#155724' : '#856404';
 
-    // Hide after a few seconds
+    // Set colors based on type for visual feedback
+    if (type === 'error') {
+        statusDiv.style.backgroundColor = '#f8d7da'; // Light red
+        statusDiv.style.color = '#721c24'; // Dark red
+    } else if (type === 'success') {
+        statusDiv.style.backgroundColor = '#d4edda'; // Light green
+        statusDiv.style.color = '#155724'; // Dark green
+    } else { // info
+        statusDiv.style.backgroundColor = '#fff3cd'; // Light yellow
+        statusDiv.style.color = '#856404'; // Dark yellow
+    }
+
+    // Hide after 5 seconds
     setTimeout(() => {
         statusDiv.style.display = 'none';
     }, 5000);
@@ -274,24 +274,20 @@ function setSyncStatus(message, type) {
 
 /**
  * Simulates fetching quote data from a server.
- * Returns an array of objects structured like our quotes.
  */
 async function fetchQuotesFromServer() {
     try {
-        // Fetch a few dummy posts from JSONPlaceholder and reformat them
-        const response = await fetch(`${MOCK_API_URL}?_limit=2`);
+        // Fetch 3 dummy posts from JSONPlaceholder and reformat
+        const response = await fetch(`${MOCK_API_URL}?_limit=3`);
         if (!response.ok) throw new Error('Network response was not ok');
 
         const posts = await response.json();
 
-        // Reformat the mock data to fit our quote structure
+        // Reformat the mock data
         const serverQuotes = posts.map(post => ({
-            text: post.title.charAt(0).toUpperCase() + post.title.slice(1) + ' (Server Updated)',
-            category: 'Server' // Assign a unique category to easily identify server data
+            text: post.title.charAt(0).toUpperCase() + post.title.slice(1) + ' (Server Update)',
+            category: 'Server'
         }));
-
-        // Add one more unique quote to simulate a new addition
-        serverQuotes.push({ text: `Server Time: ${new Date().toLocaleTimeString()}`, category: "Server" });
 
         return serverQuotes;
     } catch (error) {
@@ -302,33 +298,18 @@ async function fetchQuotesFromServer() {
 }
 
 /**
- * Simulates posting local changes to the server (not strictly necessary for this task, 
- * but demonstrates the 'post' aspect of syncing).
+ * Simulates posting local changes to the server.
  */
 async function postLocalQuotesToServer() {
-    try {
-        // Here we simulate sending the *most recent* change (not the whole array)
-        // For simplicity, we'll just log that the post is happening.
-        // In a real app, you'd only send new/modified quotes.
-
-        const response = await fetch(MOCK_API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title: 'Local quotes synced', body: quotes[quotes.length - 1]?.text || 'No quotes' }),
-        });
-
-        // if (!response.ok) throw new Error('Failed to post data.');
-        // setSyncStatus('Local data successfully posted to server.', 'success');
-        return response.ok;
-    } catch (error) {
-        console.error("Error posting quotes to server:", error);
-        // setSyncStatus('Error: Failed to post data to server.', 'error');
-        return false;
-    }
+    // In a real app, this sends new quotes to the backend.
+    // Here, we just simulate the attempt.
+    console.log("Simulating posting local changes to server...");
+    // A POST request to JSONPlaceholder usually succeeds, simulating a successful push.
+    await fetch(MOCK_API_URL, { method: 'POST', body: JSON.stringify({ status: 'Local push attempt' }) });
 }
 
 /**
- * Synchronizes local quotes with server data, applying a conflict resolution strategy.
+ * Synchronizes local quotes with server data, applying conflict resolution.
  */
 async function syncQuotes() {
     setSyncStatus('Syncing data with server...', 'info');
@@ -341,29 +322,26 @@ async function syncQuotes() {
 
     if (serverQuotes.length === 0) return;
 
-    // Simple Conflict Resolution Strategy: Server data takes precedence/is merged
-    // We will merge by ensuring all server quotes are present in the local array.
-
+    // Conflict Resolution: Server data is merged, avoiding duplicates by quote text.
     let conflictResolved = false;
     const localQuotesTexts = new Set(quotes.map(q => q.text));
 
     serverQuotes.forEach(serverQuote => {
-        // Check if the server quote is already in our local list by text
+        // Check for existence. If it's not local, it's a new server quote.
         if (!localQuotesTexts.has(serverQuote.text)) {
-            // New quote from server - add it
             quotes.push(serverQuote);
             conflictResolved = true;
         }
-        // NOTE: A more complex strategy would handle updates to existing quotes (e.g., using a timestamp/version).
-        // For this task, we assume only new additions are merged.
     });
 
     if (conflictResolved) {
         saveQuotes(); // Update local storage with merged data
         populateCategories();
         filterQuotes();
+        // UI Notification for merge/update
         setSyncStatus('Synchronization successful. New quotes from server were merged.', 'success');
     } else {
+        // UI Notification for successful, but non-updating sync
         setSyncStatus('Synchronization successful. No new changes detected from server.', 'success');
     }
 }
@@ -387,7 +365,7 @@ function initialize() {
     filterQuotes();
 
     // 4. Set up periodic data fetching/sync (Task 3)
-    // Sync every 30 seconds
+    // Run sync every 30 seconds
     setInterval(syncQuotes, 30000);
 
     // Initial sync on page load (Task 3)
