@@ -2,21 +2,92 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Quote Generator</title>
+    <style>
+        /* Basic Styling for readability - not mandatory but helpful */
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #quoteDisplay {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 50px;
+        }
+
+        .quote-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .controls,
+        .add-quote-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px dashed #eee;
+        }
+
+        .quote-text {
+            font-style: italic;
+        }
+
+        .category {
+            font-weight: bold;
+            font-size: 0.8em;
+            color: gray;
+        }
+
+        #syncStatus {
+            margin-top: 10px;
+            padding: 5px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <div id="quoteDisplay"></div>
-    <button id="newQuote">Show New Quote</button>
+    <div class="controls">
+        <h2>Filter Quotes</h2>
+        <select id="categoryFilter" onchange="filterQuotes()">
+            <option value="all">All Categories</option>
+        </select>
+        <button id="newQuote">Show Random Quote</button>
+    </div>
 
-    <div>
-        <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-        <button id="addQuoteBtn">Add Quote</button>
+    <div id="quoteDisplay">
+        <p>Your quotes will appear here.</p>
+    </div>
+
+    <div id="syncStatus"></div>
+
+    <hr>
+
+    <div class="add-quote-section">
+        <h2>Add a New Quote</h2>
+        <input id="newQuoteText" type="text" placeholder="Enter a new quote" aria-label="New Quote Text" />
+        <input id="newQuoteCategory" type="text" placeholder="Enter quote category" aria-label="New Quote Category" />
+        <button onclick="addQuote()">Add Quote</button>
+    </div>
+
+    <hr>
+
+    <div class="controls">
+        <h2>Data Management</h2>
+        <button onclick="exportToJsonFile()">Export Quotes (JSON)</button>
+        <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)"
+            aria-label="Import Quotes File" />
     </div>
 
     <script src="script.js"></script>
