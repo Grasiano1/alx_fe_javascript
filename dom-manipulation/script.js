@@ -1,59 +1,52 @@
-// ✅ Array of quotes with text and category
+// quotes array with objects containing text and category
 const quotes = [
-  { text: "The best way to predict the future is to create it.", category: "Motivation" },
-  { text: "Do what you can, with what you have, where you are.", category: "Wisdom" },
-  { text: "Success is not final; failure is not fatal: It is the courage to continue that counts.", category: "Inspiration" }
+    { text: "The best way to predict the future is to create it.", category: "Motivation" },
+    { text: "Do what you can, with what you have, where you are.", category: "Wisdom" },
+    { text: "Success usually comes to those who are too busy to be looking for it.", category: "Success" }
 ];
 
-// ✅ Reference DOM elements
-const quoteDisplay = document.getElementById("quoteDisplay");
-const newQuoteButton = document.getElementById("newQuote");
-const addQuoteBtn = document.getElementById("addQuoteBtn");
+// DOM refs
+const quoteDisplay = document.getElementById('quoteDisplay');
+const newQuoteButton = document.getElementById('newQuote');
+const addQuoteBtn = document.getElementById('addQuoteBtn');
 
-// ✅ Function to display a random quote (NOT named 'showRandomQuote')
+// displayRandomQuote function (selects random quote and updates DOM)
 function displayRandomQuote() {
-  if (quotes.length === 0) {
-    quoteDisplay.textContent = "No quotes available.";
-    return;
-  }
-
-  const randomIndex = Math.floor(Math.random() * quotes.length);
-  const randomQuote = quotes[randomIndex];
-  quoteDisplay.innerHTML = `
-    <p>"${randomQuote.text}"</p>
-    <small>- ${randomQuote.category}</small>
-  `;
+    if (quotes.length === 0) {
+        quoteDisplay.textContent = 'No quotes available.';
+        return;
+    }
+    const idx = Math.floor(Math.random() * quotes.length);
+    const q = quotes[idx];
+    quoteDisplay.innerHTML = `<p>"${q.text}"</p><small>- ${q.category}</small>`;
 }
 
-// ✅ Function to add a new quote (this must exist)
+// addQuote function (adds to quotes array and updates DOM)
 function addQuote() {
-  const textInput = document.getElementById("newQuoteText");
-  const categoryInput = document.getElementById("newQuoteCategory");
+    const textInput = document.getElementById('newQuoteText');
+    const catInput = document.getElementById('newQuoteCategory');
+    const text = textInput.value.trim();
+    const category = catInput.value.trim();
 
-  const text = textInput.value.trim();
-  const category = categoryInput.value.trim();
+    if (!text || !category) {
+        alert('Please enter both quote text and category.');
+        return;
+    }
 
-  if (text === "" || category === "") {
-    alert("Please enter both quote text and category.");
-    return;
-  }
+    // add to quotes array
+    quotes.push({ text, category });
 
-  // ✅ Logic to add quote to array
-  quotes.push({ text, category });
+    // update DOM to reflect change (show newly added quote)
+    quoteDisplay.innerHTML = `<p>Added: "${text}"</p><small>- ${category}</small>`;
 
-  // ✅ Update the DOM to show confirmation or new quote
-  quoteDisplay.innerHTML = `<p>New quote added successfully!</p>`;
-
-  // Clear inputs
-  textInput.value = "";
-  categoryInput.value = "";
+    // clear inputs
+    textInput.value = '';
+    catInput.value = '';
 }
 
-// ✅ Event listener on the “Show New Quote” button
-newQuoteButton.addEventListener("click", displayRandomQuote);
+// Event listeners
+newQuoteButton.addEventListener('click', displayRandomQuote); // event listener on "Show New Quote"
+addQuoteBtn.addEventListener('click', addQuote);
 
-// ✅ Event listener for adding a quote
-addQuoteBtn.addEventListener("click", addQuote);
-
-// ✅ Display one quote by default
+// show an initial quote
 displayRandomQuote();
